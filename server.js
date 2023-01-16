@@ -1,25 +1,28 @@
 const os = require('os');
 const { add } = require('./math');
 const path = require('path');
-const fs = require('fs');
+const fsPromise = require('fs').promises;
 
 console.log(os.homedir());
 console.log(add(3,5));
 
-fs.readFile(path.join(__dirname, 'files', 'toRead.txt'), 'utf8', (err, data) => {
-    if(err) throw err;
-    console.log(data);
-});
+const fileOps = async () => {
+    try {
+        const data = await fsPromise.readFile(path.join(__dirname, 'files', 'toRead.txt'), 'utf8');
+        await fsPromise.writeFile(path.join(__dirname, 'files', 'toWrite.txt'), 'new write 2');
 
-fs.writeFile(path.join(__dirname, 'files', 'toWrite.txt'), 'new write', (err) => {
-    if(err) throw err;
-    console.log("write complete");
-});
+        await fsPromise.appendFile(path.join(__dirname, 'files', 'toWrite.txt'), 'add a new line');
+        
+        await fsPromise.rename(path.join(__dirname, 'files', 'toWrite.txt'), path.join(__dirname, 'files', 'toWriteCompleted.txt'));
 
-fs.appendFile(path.join(__dirname, 'files', 'toWrite.txt'), 'add a new line', (err) => {
-    if(err) throw err;
-    console.log("append complete");
-});
+        console.log('completed');
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+fileOps();
+
 
 
 process.on('uncaughtException', (err) => {
