@@ -1,31 +1,23 @@
-const os = require('os');
-const { add } = require('./math');
+const express = require('express');
+const app = express();
 const path = require('path');
-const fsPromise = require('fs').promises;
+const PORT = process.env.PORT || 3500;
 
-console.log(os.homedir());
-console.log(add(3,5));
-
-const fileOps = async () => {
-    try {
-        const data = await fsPromise.readFile(path.join(__dirname, 'files', 'toRead.txt'), 'utf8');
-        await fsPromise.writeFile(path.join(__dirname, 'files', 'toWrite.txt'), 'new write 2');
-
-        await fsPromise.appendFile(path.join(__dirname, 'files', 'toWrite.txt'), 'add a new line');
-        
-        await fsPromise.rename(path.join(__dirname, 'files', 'toWrite.txt'), path.join(__dirname, 'files', 'toWriteCompleted.txt'));
-
-        console.log('completed');
-    } catch (err) {
-        console.error(err);
-    }
-}
-
-fileOps();
-
-
-
-process.on('uncaughtException', (err) => {
-    console.error(`uncaught err is ${err}`);
-    process.exit(1);
+app.get('^/$|/index(.html)?', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
+
+app.get('/new-page.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'new-page.html'));
+});
+
+// app.get('/', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'views', 'index.html'));
+// });
+
+// app.get('/', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'views', 'index.html'));
+// });
+
+
+app.listen(PORT, () => console.log(`listen on ${PORT}`));
