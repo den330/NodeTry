@@ -4,6 +4,7 @@ const path = require('path');
 const { logger } = require('./middleware/logEvents');
 const errorHandler = require('./middleware/errorHandler');
 const PORT = process.env.PORT || 3500;
+const credentials = require('./middleware/credentials');
 const cors = require('cors');
 const verifyJWT = require('./middleware/verifyJWT');
 const cookieParser = require('cookie-parser');
@@ -11,6 +12,7 @@ const corsOptions = require('./config/corsOptions');
 
 
 app.use(logger);
+app.use(credentials);
 app.use(cors(corsOptions));
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
@@ -21,6 +23,7 @@ app.use('/', require('./routes/root'));
 app.use('/register', require('./routes/register'));
 app.use('/auth', require('./routes/auth'));
 app.use('/refresh', require('./routes/refresh'));
+app.use('/logout', require('./routes/logout'));
 app.use(verifyJWT);
 app.use('/employees', require('./routes/api/employees'));
 
